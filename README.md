@@ -1,12 +1,13 @@
 Golr - Go client library for Apache Solr
 ====
 
+[![Build Status](https://drone.io/github.com/shinpei/golr/status.png)](https://drone.io/github.com/shinpei/golr/latest)
 
 Golr aims to provide you a fully accessibility to [Apache Solr](http://lucene.apache.org/solr) from Go.
 
 ## Install
 
-```
+```bash
 go get github.com/shinpei/golr
 ```
 
