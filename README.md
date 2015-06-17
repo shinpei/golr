@@ -22,7 +22,7 @@ Golr aims to provide you a fully accessibility to [Apache Solr](http://lucene.ap
 	}
 	msg := <-con.AddDocuments(d, opt)
 	fmt.Println(string(msg[:]))
-	```
+```
 
 
 ## Lisence, contact info, contribute
