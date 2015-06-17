@@ -15,6 +15,8 @@ go get github.com/shinpei/golr
 ```go
 import (
     "github.com/shinpei/golr"
+    "runtime"
+    "fmt"
 )
 func main () {
 	con, _ := golr.Connect("localhost", 8983)
