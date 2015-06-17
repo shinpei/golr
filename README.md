@@ -4,8 +4,19 @@ Golr - Go client library for Apache Solr
 
 Golr aims to provide you a fully accessibility to [Apache Solr](http://lucene.apache.org/solr) from Go.
 
-## Example
+## Install
+
+```
+go get github.com/shinpei/golr
+```
+
+## Usage
+
 ```go
+import (
+    "github.com/shinpei/golr"
+)
+func main () {
 	con, _ := golr.Connect("localhost", 8983)
 	title := "example"
 	textBody := "this is an example"
@@ -22,6 +33,7 @@ Golr aims to provide you a fully accessibility to [Apache Solr](http://lucene.ap
 	}
 	msg := <-con.AddDocuments(d, opt)
 	fmt.Println(string(msg[:]))
+}
 ```
 
 
