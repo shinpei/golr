@@ -78,13 +78,13 @@ func PostUpdate(host string, port int, payload []byte) ([]byte, error) {
 
 //func PostSelect (
 
-type XMLNodeWalker interface {
-	Walk(inputChan chan interface{}, opt *SolrAddOption, decoder *xml.Decoder)
+type XMLProcessor interface {
+	Process(inputChan chan interface{}, opt *SolrAddOption, decoder *xml.Decoder)
 }
 
 func (sc *SolrConnector) UploadXMLFile(
 	path string,
-	walker XMLNodeWalker,
+	processor XMLProcessor,
 	opt *SolrAddOption) {
 	xmlFile, err := os.Open(path)
 	if err != nil {
@@ -93,6 +93,8 @@ func (sc *SolrConnector) UploadXMLFile(
 	}
 
 	defer xmlFile.Close()
+
+	// TODO: is this thread(goroutine) safe?
 	decoder := xml.NewDecoder(xmlFile)
 
 	// prepare goroutines
@@ -103,7 +105,31 @@ func (sc *SolrConnector) UploadXMLFile(
 		go golrworker(sc, inputChan, opt, wg)
 	}
 
-	walker.Walk(inputChan, opt, decoder)
+	processor.Process(inputChan, opt, decoder)
+
+	close(inputChan)
+	wg.Wait()
+}
+
+//TODO: Fix argument type
+type JsonProcessor interface {
+	Process(inputChan chan interface{}, opt *SolrAddOption, jsonFile *os.File)
+}
+
+func (sc *SolrConnector) UploadJsonFile(path string, processor JsonProcessor, opt *SolrAddOption) {
+	jsonFile, err := os.Open(path)
+	if err != nil {
+		log.Println("Error opening file: ", err)
+		return
+	}
+	defer jsonFile.Close()
+	wg := new(sync.WaitGroup)
+	inputChan := make(chan interface{})
+	for i := 0; i < opt.Concurrency; i++ {
+		wg.Add(1)
+		go golrworker(sc, inputChan, opt, wg)
+	}
+	processor.Process(inputChan, opt, jsonFile)
 
 	close(inputChan)
 	wg.Wait()
