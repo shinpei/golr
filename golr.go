@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -60,9 +61,8 @@ func PostUpdate(host string, port int, payload []byte) ([]byte, error) {
 	req, err := http.NewRequest("POST", url, bytes.NewReader(payload))
 	req.Header.Add("Content-type", "application/json")
 
-	//	dump, _ := httputil.DumpRequestOut(req, true)
-	//	fmt.Printf("%s", dump)
-
+	//dump, _ := httputil.DumpRequestOut(req, true)
+	//fmt.Printf("%s", dump)
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -112,11 +112,11 @@ func (sc *SolrConnector) UploadXMLFile(
 }
 
 //TODO: Fix argument type
-type JsonProcessor interface {
-	Process(inputChan chan interface{}, opt *SolrAddOption, jsonFile *os.File)
+type JSONProcessor interface {
+	Process(inputChan chan interface{}, opt *SolrAddOption, jsonReader io.Reader)
 }
 
-func (sc *SolrConnector) UploadJsonFile(path string, processor JsonProcessor, opt *SolrAddOption) {
+func (sc *SolrConnector) UploadJSONFile(path string, processor JSONProcessor, opt *SolrAddOption) {
 	jsonFile, err := os.Open(path)
 	if err != nil {
 		log.Println("Error opening file: ", err)
