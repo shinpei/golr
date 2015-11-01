@@ -43,9 +43,7 @@ func (sc *SolrConnector) AddDocuments(container interface{}, opt *SolrAddOption)
 			log.Println("Failed at marshaling json structure, ", err)
 		}
 
-		respB, err := PostUpdate(sc.host,
-			sc.port,
-			b)
+		respB, err := sc.PostUpdate(b)
 		if err != nil {
 			log.Println(err)
 		}
@@ -54,10 +52,10 @@ func (sc *SolrConnector) AddDocuments(container interface{}, opt *SolrAddOption)
 	return recvChan
 }
 
-func PostUpdate(host string, port int, payload []byte) ([]byte, error) {
+func (sc *SolrConnector) PostUpdate(payload []byte) ([]byte, error) {
 
 	client := &http.Client{}
-	url := fmt.Sprintf("http://%s:%d/solr/update/json", host, port)
+	url := fmt.Sprintf("http://%s:%d/solr/update/json", sc.host, sc.port)
 	req, err := http.NewRequest("POST", url, bytes.NewReader(payload))
 	req.Header.Add("Content-type", "application/json")
 
@@ -75,8 +73,6 @@ func PostUpdate(host string, port int, payload []byte) ([]byte, error) {
 	log.Printf("Recieved %d bytes.\n", len(body))
 	return body, nil
 }
-
-//func PostSelect (
 
 type XMLProcessor interface {
 	Process(inputChan chan interface{}, opt *SolrAddOption, decoder *xml.Decoder)
