@@ -41,7 +41,7 @@ type Connector interface {
 
 func NewSolrConnect(host string,port int) *SolrConnector {
 	c := &SolrConnector{}
-	c.Connect(fmt.Sprintf("http://%s:%d/solr/update/json", host, port))
+	c.Connect(fmt.Sprintf("http://%s:%d/solr/items1/update", host, port))
 	return c;
 }
 
@@ -94,8 +94,8 @@ func (sc *SolrConnector) PostUpdate(payload []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Recieved %d bytes.\n", len(body))
-	log.Printf("%s\n", body)
+	//log.Printf("Recieved %d bytes.\n", len(body))
+	//log.Printf("%s\n", body)
 	return body, nil
 }
 
